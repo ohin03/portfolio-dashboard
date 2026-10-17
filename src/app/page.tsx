@@ -37,7 +37,8 @@ import PerformanceChart from "@/components/charts/PerformanceChart";
 import StatCard from "@/components/dashboard/StatCard";
 import SortableWidget from "@/components/dashboard/SortableWidget";
 import { useDashboardStore } from "@/lib/dashboard-store";
-
+import WidgetShell from "@/components/widgets/WidgetShell";
+import { getAllWidgetDefinitions } from "@/lib/widgets/registry";
 const stats = [
 {
 title: "Total Portfolio Value",
@@ -118,163 +119,173 @@ return ( <section
 );
 }
 
+
 function PerformanceWidget() {
-return ( <article
-   id="performance"
-   className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6"
- > <div className="flex flex-wrap items-center justify-between gap-3"> <div> <h3 className="font-semibold">Portfolio Performance</h3> <p className="mt-1 text-sm text-slate-500">
-Illustrative portfolio growth </p> </div>
+  return (
+    <WidgetShell
+      title="Portfolio Performance"
+      description="Illustrative portfolio growth"
+      action={
+        <span className="rounded-lg bg-emerald-500/10 px-3 py-1.5 text-sm text-emerald-400">
+          +12.8%
+        </span>
+      }
+    >
+      <div className="mt-2">
+        <PerformanceChart data={performanceData} height={240} />
+      </div>
 
-
-    <span className="rounded-lg bg-emerald-500/10 px-3 py-1.5 text-sm text-emerald-400">
-      +12.8%
-    </span>
-  </div>
-
-  <div className="mt-8">
-    <PerformanceChart data={performanceData} height={240} />
-  </div>
-
-  <p className="mt-3 text-xs text-slate-500">
-    Illustrative demo values · Not live market data
-  </p>
-</article>
-
-
-);
+      <p className="mt-3 text-xs text-slate-500">
+        Illustrative demo values · Not live market data
+      </p>
+    </WidgetShell>
+  );
 }
 
+
 function AssetAllocationWidget() {
-return ( <article
-   id="portfolio"
-   className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6"
- > <h3 className="font-semibold">Asset Allocation</h3> <p className="mt-1 text-sm text-slate-500">
-Portfolio distribution </p>
-
-
-  <div className="my-8 flex justify-center">
-    <div
-      className="flex h-44 w-44 items-center justify-center rounded-full"
-      style={{
-        background:
-          "conic-gradient(#3b82f6 0% 35%, #8b5cf6 35% 60%, #10b981 60% 80%, #f59e0b 80% 92%, #ec4899 92% 100%)",
-      }}
+  return (
+    <WidgetShell
+      title="Asset Allocation"
+      description="Portfolio distribution"
     >
-      <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#101522]">
-        <span className="text-xs text-slate-500">Total Assets</span>
-        <span className="mt-1 text-xl font-bold">$2.45M</span>
-      </div>
-    </div>
-  </div>
-
-  <div className="space-y-4">
-    {activities.map((item) => (
-      <div
-        key={item.name}
-        className="flex items-center justify-between text-sm"
-      >
-        <div className="flex items-center gap-2.5">
-          <span className={`h-2.5 w-2.5 rounded-sm ${item.color}`} />
-          <span className="text-slate-400">{item.name}</span>
+      <div className="my-8 flex justify-center">
+        <div
+          className="flex h-44 w-44 items-center justify-center rounded-full"
+          style={{
+            background:
+              "conic-gradient(#3b82f6 0% 35%, #8b5cf6 35% 60%, #10b981 60% 80%, #f59e0b 80% 92%, #ec4899 92% 100%)",
+          }}
+        >
+          <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#101522]">
+            <span className="text-xs text-slate-500">Total Assets</span>
+            <span className="mt-1 text-xl font-bold">$2.45M</span>
+          </div>
         </div>
-
-        <span className="font-medium">{item.allocation}%</span>
       </div>
-    ))}
-  </div>
-</article>
 
+      <div className="space-y-4">
+        {activities.map((item) => (
+          <div
+            key={item.name}
+            className="flex items-center justify-between text-sm"
+          >
+            <div className="flex items-center gap-2.5">
+              <span
+                className={`h-2.5 w-2.5 rounded-sm ${item.color}`}
+              />
+              <span className="text-slate-400">{item.name}</span>
+            </div>
 
-);
+            <span className="font-medium">{item.allocation}%</span>
+          </div>
+        ))}
+      </div>
+    </WidgetShell>
+  );
 }
 
 function RiskAnalysisWidget() {
-const risks = [
-{ label: "Value at Risk (VaR)", value: 42, text: "4.28%" },
-{ label: "Portfolio Volatility", value: 58, text: "12.6%" },
-{ label: "Risk Exposure", value: 34, text: "Moderate" },
-];
+  const risks = [
+    { label: "Value at Risk (VaR)", value: 42, text: "4.28%" },
+    { label: "Portfolio Volatility", value: 58, text: "12.6%" },
+    { label: "Risk Exposure", value: 34, text: "Moderate" },
+  ];
 
-return ( <article className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6"> <div className="flex items-center justify-between"> <h3 className="font-semibold">Risk Analysis</h3> <Activity size={19} className="text-blue-400" /> </div>
+  return (
+    <WidgetShell
+      title="Risk Analysis"
+      description="Portfolio risk indicators"
+      action={<Activity size={19} className="text-blue-400" />}
+    >
+      <div className="mt-6 space-y-5">
+        {risks.map((risk) => (
+          <div key={risk.label}>
+            <div className="mb-2 flex justify-between gap-3 text-sm">
+              <span className="text-slate-400">{risk.label}</span>
+              <span className="font-medium text-white">{risk.text}</span>
+            </div>
 
-```
-  <div className="mt-6 space-y-5">
-    {risks.map((risk) => (
-      <div key={risk.label}>
-        <div className="mb-2 flex justify-between gap-3 text-sm">
-          <span className="text-slate-400">{risk.label}</span>
-          <span className="font-medium">{risk.text}</span>
-        </div>
-
-        <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
-          <div
-            style={{ width: `${risk.value}%` }}
-            className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400"
-          />
-        </div>
+            <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                style={{ width: `${risk.value}%` }}
+                className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400"
+              />
+            </div>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</article>
 
-
-);
+      <p className="mt-5 text-xs text-slate-500">
+        Illustrative demo values · Not live risk data
+      </p>
+    </WidgetShell>
+  );
 }
 
 function MarketStatusWidget() {
-const marketItems = [
-{
-label: "S&P 500",
-value: "5,842.47",
-change: "+0.84%",
-},
-{
-label: "NASDAQ",
-value: "18,420.15",
-change: "+1.12%",
-},
-{
-label: "Active Positions",
-value: "24",
-},
-{
-label: "Cash Balance",
-value: "$184.5K",
-},
-];
+  const marketItems = [
+    {
+      label: "S&P 500",
+      value: "5,842.47",
+      change: "+0.84%",
+    },
+    {
+      label: "NASDAQ",
+      value: "18,420.15",
+      change: "+1.12%",
+    },
+    {
+      label: "Active Positions",
+      value: "24",
+    },
+    {
+      label: "Cash Balance",
+      value: "$184.5K",
+    },
+  ];
 
-return ( <article className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6"> <div className="flex items-center justify-between"> <h3 className="font-semibold">Market Status</h3>
+  return (
+    <WidgetShell
+      title="Market Status"
+      description="Market overview and portfolio activity"
+      action={
+        <span className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-400">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+          Demo Mode
+        </span>
+      }
+    >
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {marketItems.map((item) => (
+          <div
+            key={item.label}
+            className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]"
+          >
+            <p className="text-xs text-slate-500">{item.label}</p>
 
+            <p className="mt-2 text-xl font-semibold text-white">
+              {item.value}
+            </p>
 
-    <span className="flex items-center gap-2 text-xs text-emerald-400">
-      <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-      Demo Mode
-    </span>
-  </div>
-
-  <div className="mt-6 grid grid-cols-2 gap-4">
-    {marketItems.map((item) => (
-      <div
-        key={item.label}
-        className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
-      >
-        <p className="text-xs text-slate-500">{item.label}</p>
-        <p className="mt-2 text-xl font-semibold">{item.value}</p>
-
-        {item.change && (
-          <p className="mt-2 flex items-center gap-1 text-sm text-emerald-400">
-            <ArrowUpRight size={15} />
-            {item.change}
-          </p>
-        )}
+            {item.change && (
+              <p className="mt-2 flex items-center gap-1 text-sm text-emerald-400">
+                <ArrowUpRight size={15} />
+                {item.change}
+              </p>
+            )}
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</article>
 
-
-);
+      <p className="mt-5 text-xs text-slate-500">
+        Illustrative demo values · Not live market data
+      </p>
+    </WidgetShell>
+  );
 }
+
+
 
 export default function Home() {
 const [showWidgetSettings, setShowWidgetSettings] = useState(false);
@@ -294,6 +305,8 @@ coordinateGetter: sortableKeyboardCoordinates,
 );
 
 const sortedWidgets = [...widgets].sort((a, b) => a.order - b.order);
+
+const widgetDefinitions = getAllWidgetDefinitions();
 
 const visibleWidgets = sortedWidgets.filter(
 (widget) =>
@@ -473,6 +486,7 @@ return ( <main className="min-h-screen bg-[#080b14] text-slate-100"> <div classN
           </div>
         </div>
 
+
         {showWidgetSettings && (
           <section
             id="settings"
@@ -489,7 +503,8 @@ return ( <main className="min-h-screen bg-[#080b14] text-slate-100"> <div classN
                 </div>
 
                 <p className="mt-2 text-sm text-slate-400">
-                  Choose which widgets you want to display.
+                  Choose which widgets you want to display and review their
+                  details.
                 </p>
               </div>
 
@@ -505,6 +520,10 @@ return ( <main className="min-h-screen bg-[#080b14] text-slate-100"> <div classN
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {sortedWidgets.map((widget) => {
+                const definition = widgetDefinitions.find(
+                  (item) => item.type === widget.type,
+                );
+
                 const isImplemented = implementedWidgetIds.includes(
                   widget.id,
                 );
@@ -514,38 +533,57 @@ return ( <main className="min-h-screen bg-[#080b14] text-slate-100"> <div classN
                     key={widget.id}
                     type="button"
                     onClick={() => {
-                      if (isImplemented) toggleWidget(widget.id);
+                      if (isImplemented) {
+                        toggleWidget(widget.id);
+                      }
                     }}
                     disabled={!isImplemented}
                     aria-pressed={widget.visible}
-                    className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition ${
+                    className={`flex items-start justify-between gap-3 rounded-xl border px-4 py-4 text-left transition ${
                       isImplemented
-                        ? "border-white/10 bg-white/[0.03] hover:bg-white/[0.07]"
-                        : "cursor-not-allowed border-white/5 bg-white/[0.01] opacity-50"
+                        ? "border-white/10 bg-white/[0.03] hover:border-blue-500/30 hover:bg-white/[0.06]"
+                        : "cursor-not-allowed border-white/5 bg-white/[0.01] opacity-60"
                     }`}
                   >
-                    <span>
+                    <span className="min-w-0">
                       <span className="block text-sm font-medium text-slate-200">
-                        {widget.title}
+                        {definition?.title ?? widget.title}
                       </span>
-                      <span className="mt-1 block text-xs text-slate-500">
-                        {isImplemented
-                          ? widget.visible
+
+                      <span className="mt-2 block text-xs leading-5 text-slate-400">
+                        {definition?.description ?? "Dashboard widget"}
+                      </span>
+
+                      <span className="mt-2 block text-xs capitalize text-slate-500">
+                        {definition?.category ?? "other"}
+                      </span>
+
+                      <span
+                        className={`mt-3 inline-flex rounded-full px-2.5 py-1 text-xs ${
+                          !isImplemented
+                            ? "bg-white/5 text-slate-500"
+                            : widget.visible
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : "bg-amber-500/10 text-amber-400"
+                        }`}
+                      >
+                        {!isImplemented
+                          ? "Coming Soon"
+                          : widget.visible
                             ? "Visible"
-                            : "Hidden"
-                          : "Coming in a future step"}
+                            : "Hidden"}
                       </span>
                     </span>
 
                     {widget.visible && isImplemented ? (
                       <Eye
                         size={18}
-                        className="shrink-0 text-emerald-400"
+                        className="mt-1 shrink-0 text-emerald-400"
                       />
                     ) : (
                       <EyeOff
                         size={18}
-                        className="shrink-0 text-slate-500"
+                        className="mt-1 shrink-0 text-slate-500"
                       />
                     )}
                   </button>
@@ -554,14 +592,23 @@ return ( <main className="min-h-screen bg-[#080b14] text-slate-100"> <div classN
             </div>
 
             <div className="mt-5 flex items-start gap-2 rounded-xl bg-blue-500/5 p-3">
-              <Settings size={16} className="mt-0.5 shrink-0 text-blue-400" />
+              <Settings
+                size={16}
+                className="mt-0.5 shrink-0 text-blue-400"
+              />
+
               <p className="text-xs leading-5 text-slate-400">
                 Widget visibility and order are saved in this browser.
-                Five additional widget types are planned for later steps.
+                Currently, five widget types are implemented. The remaining
+                widgets will be available in future development steps.
               </p>
             </div>
           </section>
         )}
+
+
+
+
 
         <div>
           <div className="mb-4 flex items-center justify-between gap-3">
