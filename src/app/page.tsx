@@ -102,6 +102,9 @@ const implementedWidgetIds = [
   "market-status",
   "top-holdings",
   "recent-transactions",
+  "sector-exposure",
+  "benchmark-comparison",
+  "dividend-income",
 ];
 
 function PortfolioSummary() {
@@ -519,6 +522,222 @@ function RecentTransactionsWidget() {
   );
 }
 
+function SectorExposureWidget() {
+  const sectors = [
+    { name: "Technology", percentage: 35, value: "$857,738" },
+    { name: "Healthcare", percentage: 25, value: "$612,670" },
+    { name: "Financials", percentage: 20, value: "$490,136" },
+    { name: "Energy", percentage: 12, value: "$294,082" },
+    { name: "Other", percentage: 8, value: "$196,054" },
+  ];
+
+  return (
+    <WidgetShell
+      title="Sector Exposure"
+      description="Portfolio allocation by industry sector"
+      action={
+        <span className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-400">
+          5 Sectors
+        </span>
+      }
+    >
+      <div className="space-y-5">
+        {sectors.map((sector) => (
+          <div key={sector.name}>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="text-sm text-slate-300">
+                {sector.name}
+              </span>
+
+              <div className="text-right">
+                <span className="text-sm font-semibold text-white">
+                  {sector.percentage}%
+                </span>
+
+                <span className="ml-3 text-xs text-slate-500">
+                  {sector.value}
+                </span>
+              </div>
+            </div>
+
+            <div
+              className="h-2 overflow-hidden rounded-full bg-white/[0.06]"
+              role="progressbar"
+              aria-label={`${sector.name} allocation`}
+              aria-valuenow={sector.percentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                style={{ width: `${sector.percentage}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-4 text-xs text-slate-500">
+        Illustrative allocation · Demo data only
+      </p>
+    </WidgetShell>
+  );
+}
+
+function BenchmarkComparisonWidget() {
+  const benchmarks = [
+    {
+      name: "My Portfolio",
+      return: 12.8,
+      color: "bg-blue-500",
+    },
+    {
+      name: "S&P 500",
+      return: 9.4,
+      color: "bg-emerald-500",
+    },
+    {
+      name: "NASDAQ",
+      return: 11.2,
+      color: "bg-purple-500",
+    },
+  ];
+
+  return (
+    <article className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6">
+      <div className="mb-6">
+        <h3 className="text-base font-semibold text-white">
+          Benchmark Comparison
+        </h3>
+        <p className="mt-1 text-sm text-gray-400">
+          Portfolio returns vs market benchmarks
+        </p>
+      </div>
+
+      <div className="mb-5 flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+        <div>
+          <p className="text-sm text-gray-400">Period Return</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-400">
+            +12.8%
+          </p>
+        </div>
+
+        <div className="text-right">
+          <p className="text-sm text-gray-400">vs S&P 500</p>
+          <p className="mt-1 text-lg font-semibold text-emerald-400">
+            +3.4%
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-5">
+        {benchmarks.map((benchmark) => (
+          <div key={benchmark.name}>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="text-sm text-gray-300">
+                {benchmark.name}
+              </span>
+
+              <span className="text-sm font-semibold text-white">
+                +{benchmark.return.toFixed(1)}%
+              </span>
+            </div>
+
+            <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className={`h-full rounded-full ${benchmark.color}`}
+                style={{
+                  width: `${(benchmark.return / 15) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-5 text-xs text-gray-500">
+        Illustrative demo data — not live market performance.
+      </p>
+    </article>
+  );
+}
+
+
+
+function DividendIncomeWidget() {
+  const dividendData = [
+    { month: "May", amount: 320 },
+    { month: "Jun", amount: 450 },
+    { month: "Jul", amount: 380 },
+    { month: "Aug", amount: 520 },
+    { month: "Sep", amount: 610 },
+    { month: "Oct", amount: 480 },
+  ];
+
+  const totalIncome = dividendData.reduce(
+    (total, item) => total + item.amount,
+    0
+  );
+
+  const averageIncome = totalIncome / dividendData.length;
+
+  return (
+    <article className="h-full rounded-2xl border border-white/[0.08] bg-[#101522] p-5 sm:p-6">
+      <div className="mb-6">
+        <h3 className="text-base font-semibold text-white">
+          Dividend Income
+        </h3>
+        <p className="mt-1 text-sm text-gray-400">
+          Monthly dividend income overview
+        </p>
+      </div>
+
+      <div className="mb-6 grid grid-cols-2 gap-3">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-sm text-gray-400">Total Income</p>
+          <p className="mt-2 text-xl font-bold text-emerald-400">
+            ${totalIncome.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-sm text-gray-400">Monthly Average</p>
+          <p className="mt-2 text-xl font-bold text-white">
+            ${averageIncome.toFixed(0)}
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {dividendData.map((item) => (
+          <div key={item.month}>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm text-gray-300">
+                {item.month}
+              </span>
+              <span className="text-sm font-medium text-white">
+                ${item.amount}
+              </span>
+            </div>
+
+            <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className="h-full rounded-full bg-emerald-500"
+                style={{ width: `${(item.amount / 700) * 100}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-5 text-xs text-gray-500">
+        Illustrative demo data — not actual dividend earnings.
+      </p>
+    </article>
+  );
+}
+
+
 
 export default function Home() {
   const [showWidgetSettings, setShowWidgetSettings] = useState(false);
@@ -573,8 +792,19 @@ export default function Home() {
 
       case "top-holdings":
         return <TopHoldingsWidget />;
+
       case "recent-transactions":
         return <RecentTransactionsWidget />;
+
+      case "sector-exposure":
+        return <SectorExposureWidget />;
+
+      case "benchmark-comparison":
+        return <BenchmarkComparisonWidget />;
+
+      case "dividend-income":
+        return <DividendIncomeWidget />;
+
       default:
         return null;
     }
