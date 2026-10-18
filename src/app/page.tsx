@@ -101,6 +101,7 @@ const implementedWidgetIds = [
   "risk-analysis",
   "market-status",
   "top-holdings",
+  "recent-transactions",
 ];
 
 function PortfolioSummary() {
@@ -394,6 +395,131 @@ function TopHoldingsWidget() {
   );
 }
 
+function RecentTransactionsWidget() {
+  const transactions = [
+    {
+      id: "TXN-001",
+      symbol: "AAPL",
+      type: "BUY",
+      quantity: 120,
+      price: 235.45,
+      date: "Oct 17, 2026",
+    },
+    {
+      id: "TXN-002",
+      symbol: "MSFT",
+      type: "SELL",
+      quantity: 45,
+      price: 511.2,
+      date: "Oct 16, 2026",
+    },
+    {
+      id: "TXN-003",
+      symbol: "NVDA",
+      type: "BUY",
+      quantity: 200,
+      price: 178.26,
+      date: "Oct 15, 2026",
+    },
+    {
+      id: "TXN-004",
+      symbol: "AMZN",
+      type: "BUY",
+      quantity: 75,
+      price: 221.3,
+      date: "Oct 14, 2026",
+    },
+    {
+      id: "TXN-005",
+      symbol: "GOOGL",
+      type: "SELL",
+      quantity: 30,
+      price: 245.1,
+      date: "Oct 13, 2026",
+    },
+  ];
+
+  return (
+    <WidgetShell
+      title="Recent Transactions"
+      description="Your latest portfolio activity"
+      action={
+        <span className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-400">
+          {transactions.length} Transactions
+        </span>
+      }
+    >
+      <div className="space-y-4">
+        {transactions.map((transaction) => {
+          const total =
+            transaction.quantity * transaction.price;
+
+          const isBuy = transaction.type === "BUY";
+
+          return (
+            <div
+              key={transaction.id}
+              className="flex flex-col gap-3 border-b border-white/[0.06] pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
+                    isBuy
+                      ? "bg-emerald-500/10 text-emerald-400"
+                      : "bg-rose-500/10 text-rose-400"
+                  }`}
+                >
+                  {isBuy ? "BUY" : "SELL"}
+                </div>
+
+                <div>
+                  <p className="font-semibold text-white">
+                    {transaction.symbol}
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    {transaction.quantity} shares × $
+                    {transaction.price.toFixed(2)}
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    {transaction.date}
+                  </p>
+                </div>
+              </div>
+
+              <div className="sm:text-right">
+                <p className="text-sm font-semibold text-white">
+                  $
+                  {total.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </p>
+
+                <p
+                  className={`mt-1 text-xs font-medium ${
+                    isBuy
+                      ? "text-emerald-400"
+                      : "text-rose-400"
+                  }`}
+                >
+                  {transaction.type}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-4 text-xs text-slate-500">
+        Illustrative transactions · Demo data only
+      </p>
+    </WidgetShell>
+  );
+}
+
+
 export default function Home() {
   const [showWidgetSettings, setShowWidgetSettings] = useState(false);
 
@@ -447,7 +573,8 @@ export default function Home() {
 
       case "top-holdings":
         return <TopHoldingsWidget />;
-
+      case "recent-transactions":
+        return <RecentTransactionsWidget />;
       default:
         return null;
     }
