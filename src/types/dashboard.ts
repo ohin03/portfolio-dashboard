@@ -8,7 +8,9 @@ export type WidgetType =
   | "recent-transactions"
   | "sector-exposure"
   | "benchmark-comparison"
-  | "dividend-income";
+  | "dividend-income"
+  | "drawdown-analysis";
+
 
 export interface DashboardWidget {
   id: string;

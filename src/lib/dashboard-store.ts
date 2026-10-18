@@ -4,7 +4,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   DashboardLayout,
   DashboardWidget,
-  
 } from "@/types/dashboard";
 
 interface DashboardState {
@@ -87,6 +86,13 @@ const initialWidgets: DashboardWidget[] = [
     visible: true,
     order: 9,
   },
+  {
+    id: "drawdown-analysis",
+    type: "drawdown-analysis",
+    title: "Drawdown Analysis",
+    visible: true,
+    order: 10,
+  },
 ];
 
 const createInitialWidgets = (): DashboardWidget[] =>
@@ -158,6 +164,42 @@ export const useDashboardStore = create<DashboardState>()(
       partialize: (state): Pick<DashboardLayout, "widgets"> => ({
         widgets: state.widgets,
       }),
+
+      // Merge newly added widgets into an older saved layout.
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as
+          | Pick<DashboardState, "widgets">
+          | undefined;
+
+        if (!persisted?.widgets) {
+          return currentState;
+        }
+
+        const savedWidgets = persisted.widgets.filter(
+          (widget, index, widgets) =>
+            widgets.findIndex(
+              (candidate) => candidate.type === widget.type,
+            ) === index,
+        );
+        const savedTypes = new Set(savedWidgets.map((widget) => widget.type));
+
+        const missingWidgets = createInitialWidgets()
+          .filter((widget) => !savedTypes.has(widget.type))
+          .map((widget) => ({
+            ...widget,
+            order: savedWidgets.length,
+          }));
+
+        return {
+          ...currentState,
+          widgets: [...savedWidgets, ...missingWidgets].map(
+            (widget, index) => ({
+              ...widget,
+              order: index,
+            }),
+          ),
+        };
+      },
     },
   ),
 );

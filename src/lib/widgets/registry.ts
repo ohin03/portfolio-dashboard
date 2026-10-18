@@ -99,6 +99,14 @@ export const widgetRegistry: Record<WidgetType, WidgetDefinition> = {
     defaultVisible: true,
     defaultOrder: 9,
   },
+  "drawdown-analysis": {
+    type: "drawdown-analysis",
+    title: "Drawdown Analysis",
+    description: "Track portfolio declines from previous peaks.",
+    category: "risk",
+    defaultVisible: true,
+    defaultOrder: 10,
+  },
 };
 
 export function getWidgetDefinition(type: WidgetType) {

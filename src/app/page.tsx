@@ -39,6 +39,8 @@ import SortableWidget from "@/components/dashboard/SortableWidget";
 import { useDashboardStore } from "@/lib/dashboard-store";
 import WidgetShell from "@/components/widgets/WidgetShell";
 import { getAllWidgetDefinitions } from "@/lib/widgets/registry";
+import DrawdownChart from "@/components/charts/DrawdownChart";
+import type { WidgetType } from "@/types/dashboard";
 
 const stats = [
   {
@@ -94,7 +96,7 @@ const performanceData = [
   { date: "Oct 16", value: 2450680 },
 ];
 
-const implementedWidgetIds = [
+const implementedWidgetTypes: WidgetType[] = [
   "portfolio-summary",
   "performance",
   "asset-allocation",
@@ -105,6 +107,7 @@ const implementedWidgetIds = [
   "sector-exposure",
   "benchmark-comparison",
   "dividend-income",
+  "drawdown-analysis",
 ];
 
 function PortfolioSummary() {
@@ -762,7 +765,7 @@ export default function Home() {
 
   const visibleWidgets = sortedWidgets.filter(
     (widget) =>
-      widget.visible && implementedWidgetIds.includes(widget.id),
+      widget.visible && implementedWidgetTypes.includes(widget.type),
   );
 
   function handleDragEnd(event: DragEndEvent) {
@@ -773,8 +776,8 @@ export default function Home() {
     }
   }
 
-  function renderWidget(widgetId: string) {
-    switch (widgetId) {
+  function renderWidget(widgetType: WidgetType) {
+    switch (widgetType) {
       case "portfolio-summary":
         return <PortfolioSummary />;
 
@@ -804,6 +807,9 @@ export default function Home() {
 
       case "dividend-income":
         return <DividendIncomeWidget />;
+
+      case "drawdown-analysis":
+        return <DrawdownChart />;
 
       default:
         return null;
@@ -1003,8 +1009,8 @@ export default function Home() {
                       (item) => item.type === widget.type,
                     );
 
-                    const isImplemented = implementedWidgetIds.includes(
-                      widget.id,
+                    const isImplemented = implementedWidgetTypes.includes(
+                      widget.type,
                     );
 
                     return (
@@ -1078,9 +1084,8 @@ export default function Home() {
 
                   <p className="text-xs leading-5 text-slate-400">
                     Widget visibility and order are saved in this browser.
-                    Currently, six widget types are implemented. The
-                    remaining widgets will be available in future
-                    development steps.
+                    All {implementedWidgetTypes.length} widget types are
+                    currently implemented.
                   </p>
                 </div>
               </section>
@@ -1108,7 +1113,7 @@ export default function Home() {
                   <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-2">
                     {visibleWidgets.map((widget) => (
                       <SortableWidget key={widget.id} id={widget.id}>
-                        {renderWidget(widget.id)}
+                        {renderWidget(widget.type)}
                       </SortableWidget>
                     ))}
                   </div>
