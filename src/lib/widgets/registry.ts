@@ -115,6 +115,14 @@ export const widgetRegistry: Record<WidgetType, WidgetDefinition> = {
     defaultVisible: true,
     defaultOrder: 11,
   },
+  "correlation-matrix": {
+    type: "correlation-matrix",
+    title: "Correlation Matrix",
+    description: "Compare correlations between portfolio assets.",
+    category: "risk",
+    defaultVisible: true,
+    defaultOrder: 12,
+  },
 };
 
 export function getWidgetDefinition(type: WidgetType) {

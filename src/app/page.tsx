@@ -109,6 +109,7 @@ const implementedWidgetTypes: WidgetType[] = [
   "dividend-income",
   "drawdown-analysis",
   "risk-metrics",
+  "correlation-matrix",
 ];
 
 function PortfolioSummary() {
@@ -294,6 +295,114 @@ function RiskAnalysisWidget() {
         Illustrative demo values · Not live risk data or financial advice.
         VaR interpretation depends on the model, confidence level, and time
         horizon.
+      </p>
+    </WidgetShell>
+  );
+}
+
+const correlationAssets = [
+  "Technology",
+  "Healthcare",
+  "Financials",
+  "Energy",
+  "Bonds",
+];
+
+const correlationValues = [
+  [1.00, 0.62, 0.48, 0.21, -0.18],
+  [0.62, 1.00, 0.35, 0.12, -0.08],
+  [0.48, 0.35, 1.00, 0.41, -0.22],
+  [0.21, 0.12, 0.41, 1.00, -0.31],
+  [-0.18, -0.08, -0.22, -0.31, 1.00],
+];
+
+function CorrelationMatrixWidget() {
+  function cellStyle(value: number): React.CSSProperties {
+    if (value >= 0) {
+      const intensity = Math.round(35 + value * 40);
+      return {
+        backgroundColor: `rgba(16, 185, 129, ${intensity / 100})`,
+        color: "#ecfdf5",
+      };
+    }
+
+    const intensity = Math.round(35 + Math.abs(value) * 40);
+    return {
+      backgroundColor: `rgba(244, 63, 94, ${intensity / 100})`,
+      color: "#fff1f2",
+    };
+  }
+
+  return (
+    <WidgetShell
+      title="Correlation Matrix"
+      description="Illustrative relationships between asset classes"
+      action={<Activity size={19} className="text-cyan-400" />}
+    >
+      <div className="mt-5 overflow-x-auto">
+        <table
+          className="w-full min-w-[440px] border-separate border-spacing-1 text-center text-xs"
+          aria-label="Illustrative portfolio asset correlation matrix"
+        >
+          <thead>
+            <tr>
+              <th scope="col" className="p-2 text-left text-slate-500">
+                Asset
+              </th>
+              {correlationAssets.map((asset) => (
+                <th
+                  key={asset}
+                  scope="col"
+                  className="p-2 font-medium text-slate-400"
+                >
+                  {asset}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {correlationAssets.map((asset, rowIndex) => (
+              <tr key={asset}>
+                <th
+                  scope="row"
+                  className="whitespace-nowrap p-2 text-left font-medium text-slate-300"
+                >
+                  {asset}
+                </th>
+                {correlationValues[rowIndex].map((value, columnIndex) => (
+                  <td
+                    key={`${asset}-${correlationAssets[columnIndex]}`}
+                    title={`${asset} / ${correlationAssets[columnIndex]}: ${value.toFixed(2)}`}
+                    className="rounded-md p-3 font-semibold tabular-nums"
+                    style={cellStyle(value)}
+                  >
+                    {value.toFixed(2)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-400">
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-sm bg-emerald-500" />
+          Positive
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-sm bg-slate-500" />
+          Near zero
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-sm bg-rose-500" />
+          Negative
+        </span>
+      </div>
+
+      <p className="mt-4 text-xs leading-5 text-slate-500">
+        Demo correlation values for UI demonstration only. These are not
+        calculated from historical market returns or live portfolio data.
       </p>
     </WidgetShell>
   );
@@ -967,6 +1076,9 @@ export default function Home() {
 
       case "risk-metrics":
         return <RiskMetricsWidget />;
+
+      case "correlation-matrix":
+        return <CorrelationMatrixWidget />;
 
       default:
         return null;

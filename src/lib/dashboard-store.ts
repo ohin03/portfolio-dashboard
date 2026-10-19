@@ -100,6 +100,13 @@ const initialWidgets: DashboardWidget[] = [
     visible: true,
     order: 11,
   },
+  {
+    id: "correlation-matrix",
+    type: "correlation-matrix",
+    title: "Correlation Matrix",
+    visible: true,
+    order: 12,
+  },
 ];
 
 const createInitialWidgets = (): DashboardWidget[] =>

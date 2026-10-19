@@ -11,7 +11,7 @@ export type WidgetType =
   | "dividend-income"
   | "drawdown-analysis"
   | "risk-metrics"
-  | "risk-metrics";
+  | "correlation-matrix";
 
 export interface DashboardWidget {
   id: string;
