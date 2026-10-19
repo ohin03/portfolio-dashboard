@@ -86,14 +86,14 @@ const activities = [
 ];
 
 const performanceData = [
-  { date: "Sep 16", value: 2180000 },
-  { date: "Sep 20", value: 2210000 },
-  { date: "Sep 24", value: 2195000 },
-  { date: "Sep 28", value: 2260000 },
-  { date: "Oct 02", value: 2290000 },
-  { date: "Oct 06", value: 2315000 },
-  { date: "Oct 10", value: 2380000 },
-  { date: "Oct 16", value: 2450680 },
+  { date: "Sep 16", value: 2180000, benchmark: 2000000 },
+  { date: "Sep 20", value: 2210000, benchmark: 2020000 },
+  { date: "Sep 24", value: 2195000, benchmark: 2015000 },
+  { date: "Sep 28", value: 2260000, benchmark: 2050000 },
+  { date: "Oct 02", value: 2290000, benchmark: 2070000 },
+  { date: "Oct 06", value: 2315000, benchmark: 2090000 },
+  { date: "Oct 10", value: 2380000, benchmark: 2120000 },
+  { date: "Oct 16", value: 2450680, benchmark: 2150000 },
 ];
 
 const implementedWidgetTypes: WidgetType[] = [
