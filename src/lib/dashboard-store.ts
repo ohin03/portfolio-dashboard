@@ -93,6 +93,13 @@ const initialWidgets: DashboardWidget[] = [
     visible: true,
     order: 10,
   },
+  {
+    id: "risk-metrics",
+    type: "risk-metrics",
+    title: "Risk Metrics",
+    visible: true,
+    order: 11,
+  },
 ];
 
 const createInitialWidgets = (): DashboardWidget[] =>
@@ -161,11 +168,13 @@ export const useDashboardStore = create<DashboardState>()(
     {
       name: "portfolio-analytics-dashboard-layout",
       storage: createJSONStorage(() => localStorage),
+
       partialize: (state): Pick<DashboardLayout, "widgets"> => ({
         widgets: state.widgets,
       }),
 
-      // Merge newly added widgets into an older saved layout.
+      // Add new widgets to older saved layouts without
+      // resetting existing visibility and order preferences.
       merge: (persistedState, currentState) => {
         const persisted = persistedState as
           | Pick<DashboardState, "widgets">
@@ -181,23 +190,26 @@ export const useDashboardStore = create<DashboardState>()(
               (candidate) => candidate.type === widget.type,
             ) === index,
         );
-        const savedTypes = new Set(savedWidgets.map((widget) => widget.type));
 
-        const missingWidgets = createInitialWidgets()
-          .filter((widget) => !savedTypes.has(widget.type))
-          .map((widget) => ({
-            ...widget,
-            order: savedWidgets.length,
-          }));
+        const savedTypes = new Set(
+          savedWidgets.map((widget) => widget.type),
+        );
+
+        const missingWidgets = createInitialWidgets().filter(
+          (widget) => !savedTypes.has(widget.type),
+        );
+
+        const combinedWidgets = [
+          ...savedWidgets,
+          ...missingWidgets,
+        ];
 
         return {
           ...currentState,
-          widgets: [...savedWidgets, ...missingWidgets].map(
-            (widget, index) => ({
-              ...widget,
-              order: index,
-            }),
-          ),
+          widgets: combinedWidgets.map((widget, index) => ({
+            ...widget,
+            order: index,
+          })),
         };
       },
     },

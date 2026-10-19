@@ -108,6 +108,7 @@ const implementedWidgetTypes: WidgetType[] = [
   "benchmark-comparison",
   "dividend-income",
   "drawdown-analysis",
+  "risk-metrics",
 ];
 
 function PortfolioSummary() {
@@ -195,11 +196,25 @@ function AssetAllocationWidget() {
   );
 }
 
+
 function RiskAnalysisWidget() {
+  const varPercentage = 4.28;
+  const volatility = 12.6;
+  const riskLevel = "Moderate";
+
   const risks = [
-    { label: "Value at Risk (VaR)", value: 42, text: "4.28%" },
-    { label: "Portfolio Volatility", value: 58, text: "12.6%" },
-    { label: "Risk Exposure", value: 34, text: "Moderate" },
+    {
+      label: "Portfolio Volatility",
+      value: 58,
+      text: `${volatility}%`,
+      color: "from-cyan-500 to-blue-400",
+    },
+    {
+      label: "Risk Exposure",
+      value: 34,
+      text: riskLevel,
+      color: "from-emerald-500 to-teal-400",
+    },
   ];
 
   return (
@@ -208,10 +223,59 @@ function RiskAnalysisWidget() {
       description="Portfolio risk indicators"
       action={<Activity size={19} className="text-blue-400" />}
     >
-      <div className="mt-6 space-y-5">
+      <div className="mt-5">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm text-slate-400">
+                Value at Risk (VaR)
+              </p>
+              <p className="mt-2 text-3xl font-semibold tracking-tight text-white">
+                {varPercentage.toFixed(2)}%
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                Illustrative portfolio risk estimate
+              </p>
+            </div>
+
+            <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300">
+              Moderate
+            </span>
+          </div>
+
+          <div className="mt-5">
+            <div className="relative h-3 overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="absolute inset-y-0 left-0 w-1/3 bg-emerald-500/80" />
+              <div className="absolute inset-y-0 left-1/3 w-1/3 bg-amber-400/80" />
+              <div className="absolute inset-y-0 right-0 w-1/3 bg-rose-500/80" />
+
+              <div
+                className="absolute inset-y-0 z-10 w-1 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                style={{ left: "42.8%" }}
+                title="Illustrative VaR indicator"
+              />
+            </div>
+
+            <div className="mt-2 flex justify-between text-[11px] text-slate-500">
+              <span>Low</span>
+              <span>Moderate</span>
+              <span>High</span>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between border-t border-white/[0.07] pt-3 text-xs">
+            <span className="text-slate-500">Risk indicator</span>
+            <span className="font-medium text-amber-300">
+              Within moderate zone
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-5">
         {risks.map((risk) => (
           <div key={risk.label}>
-            <div className="mb-2 flex justify-between gap-3 text-sm">
+            <div className="mb-2 flex items-center justify-between gap-3 text-sm">
               <span className="text-slate-400">{risk.label}</span>
               <span className="font-medium text-white">{risk.text}</span>
             </div>
@@ -219,19 +283,109 @@ function RiskAnalysisWidget() {
             <div className="h-2 overflow-hidden rounded-full bg-white/[0.06]">
               <div
                 style={{ width: `${risk.value}%` }}
-                className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400"
+                className={`h-full rounded-full bg-gradient-to-r ${risk.color}`}
               />
             </div>
           </div>
         ))}
       </div>
 
-      <p className="mt-5 text-xs text-slate-500">
-        Illustrative demo values · Not live risk data
+      <p className="mt-5 text-xs leading-5 text-slate-500">
+        Illustrative demo values · Not live risk data or financial advice.
+        VaR interpretation depends on the model, confidence level, and time
+        horizon.
       </p>
     </WidgetShell>
   );
 }
+
+function RiskMetricsWidget() {
+  const metrics = [
+    {
+      label: "Sharpe Ratio",
+      value: "1.42",
+      description: "Risk-adjusted return",
+      progress: 71,
+      color: "from-blue-500 to-cyan-400",
+    },
+    {
+      label: "Maximum Drawdown",
+      value: "-6.32%",
+      description: "Peak-to-trough decline",
+      progress: 42,
+      color: "from-rose-500 to-orange-400",
+    },
+    {
+      label: "Portfolio Volatility",
+      value: "12.6%",
+      description: "Return fluctuation indicator",
+      progress: 58,
+      color: "from-violet-500 to-blue-400",
+    },
+  ];
+
+  return (
+    <WidgetShell
+      title="Risk Metrics"
+      description="Risk-adjusted returns and portfolio risk"
+      action={<Activity size={19} className="text-blue-400" />}
+    >
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {metrics.map((metric) => (
+          <div
+            key={metric.label}
+            className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4"
+          >
+            <p className="text-sm text-slate-400">{metric.label}</p>
+
+            <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+              {metric.value}
+            </p>
+
+            <p className="mt-1 text-xs text-slate-500">
+              {metric.description}
+            </p>
+
+            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className={`h-full rounded-full bg-gradient-to-r ${metric.color}`}
+                style={{ width: `${metric.progress}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-amber-400/10 bg-amber-400/[0.04] p-3">
+        <div>
+          <p className="text-sm font-medium text-white">
+            Illustrative Risk Profile
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Demo metrics only; not a live risk assessment.
+          </p>
+        </div>
+
+        <span className="shrink-0 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300">
+          Moderate
+        </span>
+      </div>
+
+      <p className="mt-4 text-xs leading-5 text-slate-500">
+        Sharpe Ratio interpretation depends on the return period, risk-free
+        rate, and calculation method. All displayed metrics are illustrative.
+      </p>
+    </WidgetShell>
+  );
+}
+
+
+
+
+
+
+
+
 
 function MarketStatusWidget() {
   const marketItems = [
@@ -810,6 +964,9 @@ export default function Home() {
 
       case "drawdown-analysis":
         return <DrawdownChart />;
+
+      case "risk-metrics":
+        return <RiskMetricsWidget />;
 
       default:
         return null;
