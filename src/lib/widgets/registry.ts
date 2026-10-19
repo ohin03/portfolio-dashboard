@@ -107,6 +107,14 @@ export const widgetRegistry: Record<WidgetType, WidgetDefinition> = {
     defaultVisible: true,
     defaultOrder: 10,
   },
+  "risk-metrics": {
+    type: "risk-metrics",
+    title: "Risk Metrics",
+    description: "Monitor risk-adjusted returns and portfolio risk metrics.",
+    category: "risk",
+    defaultVisible: true,
+    defaultOrder: 11,
+  },
 };
 
 export function getWidgetDefinition(type: WidgetType) {

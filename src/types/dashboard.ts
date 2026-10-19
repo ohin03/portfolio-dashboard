@@ -9,8 +9,9 @@ export type WidgetType =
   | "sector-exposure"
   | "benchmark-comparison"
   | "dividend-income"
-  | "drawdown-analysis";
-
+  | "drawdown-analysis"
+  | "risk-metrics"
+  | "risk-metrics";
 
 export interface DashboardWidget {
   id: string;
