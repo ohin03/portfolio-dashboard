@@ -33,6 +33,11 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
+import {
+  calculateBrinsonAttribution,
+  type BrinsonSector,
+} from "@/lib/analytics/brinson-attribution";
+
 import PerformanceChart from "@/components/charts/PerformanceChart";
 import StatCard from "@/components/dashboard/StatCard";
 import SortableWidget from "@/components/dashboard/SortableWidget";
@@ -409,14 +414,6 @@ function CorrelationMatrixWidget() {
   );
 }
 
-type BrinsonSector = {
-  sector: string;
-  portfolioWeight: number;
-  benchmarkWeight: number;
-  portfolioReturn: number;
-  benchmarkReturn: number;
-};
-
 function BrinsonAttributionWidget() {
   const sectors: BrinsonSector[] = [
     { sector: "Technology", portfolioWeight: 0.35, benchmarkWeight: 0.30, portfolioReturn: 0.12, benchmarkReturn: 0.09 },
@@ -426,35 +423,17 @@ function BrinsonAttributionWidget() {
     { sector: "Consumer & Other", portfolioWeight: 0.15, benchmarkWeight: 0.15, portfolioReturn: 0.06, benchmarkReturn: 0.05 },
   ];
 
-  const rows = sectors.map((item) => {
-    const allocation =
-      (item.portfolioWeight - item.benchmarkWeight) *
-      (item.benchmarkReturn - sectors.reduce(
-        (sum, sector) => sum + sector.benchmarkWeight * sector.benchmarkReturn,
-        0,
-      ));
-    const selection =
-      item.benchmarkWeight *
-      (item.portfolioReturn - item.benchmarkReturn);
-    const interaction =
-      (item.portfolioWeight - item.benchmarkWeight) *
-      (item.portfolioReturn - item.benchmarkReturn);
+  const attribution = calculateBrinsonAttribution(sectors);
 
-    return { ...item, allocation, selection, interaction };
-  });
-
-  const portfolioReturn = sectors.reduce(
-    (sum, item) => sum + item.portfolioWeight * item.portfolioReturn,
-    0,
-  );
-  const benchmarkReturn = sectors.reduce(
-    (sum, item) => sum + item.benchmarkWeight * item.benchmarkReturn,
-    0,
-  );
-  const totalAllocation = rows.reduce((sum, item) => sum + item.allocation, 0);
-  const totalSelection = rows.reduce((sum, item) => sum + item.selection, 0);
-  const totalInteraction = rows.reduce((sum, item) => sum + item.interaction, 0);
-  const activeReturn = portfolioReturn - benchmarkReturn;
+  const {
+    rows,
+    portfolioReturn,
+    benchmarkReturn,
+    totalAllocation,
+    totalSelection,
+    totalInteraction,
+    activeReturn,
+  } = attribution;
 
   const formatEffect = (value: number) =>
     `${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
