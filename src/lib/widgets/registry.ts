@@ -123,6 +123,15 @@ export const widgetRegistry: Record<WidgetType, WidgetDefinition> = {
     defaultVisible: true,
     defaultOrder: 12,
   },
+
+  "brinson-attribution": {
+    type: "brinson-attribution",
+    title: "Brinson Performance Attribution",
+    description: "Analyze allocation, selection, and interaction effects versus a benchmark.",
+    category: "performance",
+    defaultVisible: true,
+    defaultOrder: 13,
+  },
 };
 
 export function getWidgetDefinition(type: WidgetType) {

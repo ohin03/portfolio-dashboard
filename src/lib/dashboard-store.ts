@@ -107,6 +107,13 @@ const initialWidgets: DashboardWidget[] = [
     visible: true,
     order: 12,
   },
+  {
+    id: "brinson-attribution",
+    type: "brinson-attribution",
+    title: "Brinson Performance Attribution",
+    visible: true,
+    order: 13,
+  },
 ];
 
 const createInitialWidgets = (): DashboardWidget[] =>

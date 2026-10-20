@@ -110,6 +110,7 @@ const implementedWidgetTypes: WidgetType[] = [
   "drawdown-analysis",
   "risk-metrics",
   "correlation-matrix",
+  "brinson-attribution",
 ];
 
 function PortfolioSummary() {
@@ -403,6 +404,122 @@ function CorrelationMatrixWidget() {
       <p className="mt-4 text-xs leading-5 text-slate-500">
         Demo correlation values for UI demonstration only. These are not
         calculated from historical market returns or live portfolio data.
+      </p>
+    </WidgetShell>
+  );
+}
+
+type BrinsonSector = {
+  sector: string;
+  portfolioWeight: number;
+  benchmarkWeight: number;
+  portfolioReturn: number;
+  benchmarkReturn: number;
+};
+
+function BrinsonAttributionWidget() {
+  const sectors: BrinsonSector[] = [
+    { sector: "Technology", portfolioWeight: 0.35, benchmarkWeight: 0.30, portfolioReturn: 0.12, benchmarkReturn: 0.09 },
+    { sector: "Healthcare", portfolioWeight: 0.20, benchmarkWeight: 0.22, portfolioReturn: 0.07, benchmarkReturn: 0.08 },
+    { sector: "Financials", portfolioWeight: 0.18, benchmarkWeight: 0.20, portfolioReturn: 0.10, benchmarkReturn: 0.06 },
+    { sector: "Energy", portfolioWeight: 0.12, benchmarkWeight: 0.13, portfolioReturn: -0.02, benchmarkReturn: 0.01 },
+    { sector: "Consumer & Other", portfolioWeight: 0.15, benchmarkWeight: 0.15, portfolioReturn: 0.06, benchmarkReturn: 0.05 },
+  ];
+
+  const rows = sectors.map((item) => {
+    const allocation =
+      (item.portfolioWeight - item.benchmarkWeight) *
+      (item.benchmarkReturn - sectors.reduce(
+        (sum, sector) => sum + sector.benchmarkWeight * sector.benchmarkReturn,
+        0,
+      ));
+    const selection =
+      item.benchmarkWeight *
+      (item.portfolioReturn - item.benchmarkReturn);
+    const interaction =
+      (item.portfolioWeight - item.benchmarkWeight) *
+      (item.portfolioReturn - item.benchmarkReturn);
+
+    return { ...item, allocation, selection, interaction };
+  });
+
+  const portfolioReturn = sectors.reduce(
+    (sum, item) => sum + item.portfolioWeight * item.portfolioReturn,
+    0,
+  );
+  const benchmarkReturn = sectors.reduce(
+    (sum, item) => sum + item.benchmarkWeight * item.benchmarkReturn,
+    0,
+  );
+  const totalAllocation = rows.reduce((sum, item) => sum + item.allocation, 0);
+  const totalSelection = rows.reduce((sum, item) => sum + item.selection, 0);
+  const totalInteraction = rows.reduce((sum, item) => sum + item.interaction, 0);
+  const activeReturn = portfolioReturn - benchmarkReturn;
+
+  const formatEffect = (value: number) =>
+    `${value >= 0 ? "+" : ""}${(value * 100).toFixed(2)}%`;
+
+  const summary = [
+    { label: "Allocation Effect", value: totalAllocation, color: "text-cyan-300" },
+    { label: "Selection Effect", value: totalSelection, color: "text-emerald-300" },
+    { label: "Interaction Effect", value: totalInteraction, color: "text-violet-300" },
+    { label: "Active Return", value: activeReturn, color: activeReturn >= 0 ? "text-emerald-300" : "text-rose-300" },
+  ];
+
+  return (
+    <WidgetShell
+      title="Brinson Performance Attribution"
+      description="Break down portfolio return relative to its benchmark"
+      action={<Activity size={19} className="text-cyan-400" />}
+    >
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {summary.map((item) => (
+          <div key={item.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <p className="text-xs text-slate-400">{item.label}</p>
+            <p className={`mt-2 text-xl font-semibold tabular-nums ${item.color}`}>
+              {formatEffect(item.value)}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-4 text-sm text-slate-300">
+        <span>Portfolio return: <strong>{(portfolioReturn * 100).toFixed(2)}%</strong></span>
+        <span>Benchmark return: <strong>{(benchmarkReturn * 100).toFixed(2)}%</strong></span>
+      </div>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[680px] text-left text-xs">
+          <caption className="sr-only">Illustrative Brinson sector attribution effects</caption>
+          <thead>
+            <tr className="border-b border-white/10 text-slate-400">
+              <th scope="col" className="px-3 py-3">Sector</th>
+              <th scope="col" className="px-3 py-3 text-right">Portfolio Wt.</th>
+              <th scope="col" className="px-3 py-3 text-right">Benchmark Wt.</th>
+              <th scope="col" className="px-3 py-3 text-right">Allocation</th>
+              <th scope="col" className="px-3 py-3 text-right">Selection</th>
+              <th scope="col" className="px-3 py-3 text-right">Interaction</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((item) => (
+              <tr key={item.sector} className="border-b border-white/5">
+                <th scope="row" className="px-3 py-3 font-medium text-slate-200">{item.sector}</th>
+                <td className="px-3 py-3 text-right tabular-nums">{(item.portfolioWeight * 100).toFixed(0)}%</td>
+                <td className="px-3 py-3 text-right tabular-nums">{(item.benchmarkWeight * 100).toFixed(0)}%</td>
+                <td className={`px-3 py-3 text-right tabular-nums ${item.allocation >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{formatEffect(item.allocation)}</td>
+                <td className={`px-3 py-3 text-right tabular-nums ${item.selection >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{formatEffect(item.selection)}</td>
+                <td className={`px-3 py-3 text-right tabular-nums ${item.interaction >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{formatEffect(item.interaction)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-4 text-xs leading-5 text-slate-500">
+        Illustrative demo data only, not live investment data or financial advice.
+        Attribution uses the Brinson-Fachler allocation formula and standard selection
+        and interaction effects. Sector weights and returns are sample inputs.
       </p>
     </WidgetShell>
   );
@@ -1079,6 +1196,9 @@ export default function Home() {
 
       case "correlation-matrix":
         return <CorrelationMatrixWidget />;
+
+      case "brinson-attribution":
+        return <BrinsonAttributionWidget />;
 
       default:
         return null;
