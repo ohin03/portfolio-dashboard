@@ -42,6 +42,7 @@ import PerformanceChart from "@/components/charts/PerformanceChart";
 import StatCard from "@/components/dashboard/StatCard";
 import SortableWidget from "@/components/dashboard/SortableWidget";
 import { useDashboardStore } from "@/lib/dashboard-store";
+import { useThemeStore } from "@/lib/theme-store";
 import WidgetShell from "@/components/widgets/WidgetShell";
 import { getAllWidgetDefinitions } from "@/lib/widgets/registry";
 import DrawdownChart from "@/components/charts/DrawdownChart";
@@ -327,15 +328,15 @@ function CorrelationMatrixWidget() {
     if (value >= 0) {
       const intensity = Math.round(35 + value * 40);
       return {
-        backgroundColor: `rgba(16, 185, 129, ${intensity / 100})`,
-        color: "#ecfdf5",
+        backgroundColor: `rgba(6, 78, 59, ${intensity / 100})`,
+        color: "#ffffff",
       };
     }
 
     const intensity = Math.round(35 + Math.abs(value) * 40);
     return {
-      backgroundColor: `rgba(244, 63, 94, ${intensity / 100})`,
-      color: "#fff1f2",
+      backgroundColor: `rgba(136, 19, 55, ${intensity / 100})`,
+      color: "#ffffff",
     };
   }
 
@@ -345,7 +346,7 @@ function CorrelationMatrixWidget() {
       description="Illustrative relationships between asset classes"
       action={<Activity size={19} className="text-cyan-400" />}
     >
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400" tabIndex={0} role="region" aria-label="Scrollable data table">
         <table
           className="w-full min-w-[440px] border-separate border-spacing-1 text-center text-xs"
           aria-label="Illustrative portfolio asset correlation matrix"
@@ -467,7 +468,7 @@ function BrinsonAttributionWidget() {
         <span>Benchmark return: <strong>{(benchmarkReturn * 100).toFixed(2)}%</strong></span>
       </div>
 
-      <div className="mt-5 overflow-x-auto">
+      <div className="mt-5 overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400" tabIndex={0} role="region" aria-label="Scrollable data table">
         <table className="w-full min-w-[680px] text-left text-xs">
           <caption className="sr-only">Illustrative Brinson sector attribution effects</caption>
           <thead>
@@ -1104,6 +1105,14 @@ function DividendIncomeWidget() {
 export default function Home() {
   const [showWidgetSettings, setShowWidgetSettings] = useState(false);
 
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
+  const brandName = useThemeStore((state) => state.brandName);
+  const setBrandName = useThemeStore((state) => state.setBrandName);
+  const primaryColor = useThemeStore((state) => state.primaryColor);
+  const accentColor = useThemeStore((state) => state.accentColor);
+  const setBrandColors = useThemeStore((state) => state.setBrandColors);
+
   const widgets = useDashboardStore((state) => state.widgets);
   const toggleWidget = useDashboardStore((state) => state.toggleWidget);
   const resetLayout = useDashboardStore((state) => state.resetLayout);
@@ -1185,17 +1194,17 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#080b14] text-slate-100">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors duration-200">
       <div className="flex min-h-screen">
-        <aside className="hidden w-64 shrink-0 border-r border-white/10 bg-[#0c101c] p-6 lg:flex lg:flex-col">
+        <aside className="hidden w-64 shrink-0 border-r border-[var(--border)] bg-[var(--surface)] p-6 lg:flex lg:flex-col">
           <div className="mb-12 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: primaryColor }}>
               <ChartNoAxesCombined size={23} />
             </div>
 
             <div>
-              <h1 className="text-lg font-bold tracking-wide">
-                PORTFOLIO
+              <h1 className="max-w-44 truncate text-lg font-bold tracking-wide">
+                {brandName || "Portfolio Analytics"}
               </h1>
               <p className="text-xs text-slate-500">
                 ANALYTICS DASHBOARD
@@ -1209,7 +1218,7 @@ export default function Home() {
 
           <nav className="space-y-2">
             <a
-              className="flex items-center gap-3 rounded-xl bg-blue-600/15 px-4 py-3 text-sm font-medium text-blue-400 ring-1 ring-blue-500/20"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ring-1 transition-colors" style={{ color: "#ffffff", backgroundColor: `${primaryColor}20`, boxShadow: `inset 0 0 0 1px ${primaryColor}35` }}
               href="#overview"
             >
               <LayoutDashboard size={19} />
@@ -1217,7 +1226,7 @@ export default function Home() {
             </a>
 
             <a
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-400 transition hover:bg-white/5 hover:text-white"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-[var(--muted)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
               href="#portfolio"
             >
               <BriefcaseBusiness size={19} />
@@ -1225,7 +1234,7 @@ export default function Home() {
             </a>
 
             <a
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-400 transition hover:bg-white/5 hover:text-white"
+              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-[var(--muted)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--foreground)]"
               href="#performance"
             >
               <ChartNoAxesCombined size={19} />
@@ -1292,10 +1301,14 @@ export default function Home() {
               <button
                 type="button"
                 aria-label="Notifications"
-                className="relative rounded-xl border border-white/10 p-2.5 text-slate-400 hover:text-white"
+                className="relative rounded-xl border border-white/10 p-2.5 text-slate-400 transition hover:text-white"
+                style={{ borderColor: `${accentColor}55` }}
               >
                 <Bell size={19} />
-                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-blue-400" />
+                <span
+                  className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: accentColor }}
+                />
               </button>
 
               <button
@@ -1305,7 +1318,18 @@ export default function Home() {
                 }
                 aria-label="Customize dashboard widgets"
                 aria-expanded={showWidgetSettings}
-                className="inline-flex items-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-2.5 text-sm font-medium text-blue-300 transition hover:bg-blue-500/20 sm:px-4"
+                className="inline-flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-medium transition sm:px-4"
+                style={{
+                  color: accentColor,
+                  borderColor: `${accentColor}55`,
+                  backgroundColor: `${accentColor}18`,
+                }}
+                onMouseEnter={(event) => {
+                  event.currentTarget.style.backgroundColor = `${accentColor}30`;
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.backgroundColor = `${accentColor}18`;
+                }}
               >
                 <SlidersHorizontal size={17} />
                 <span className="hidden sm:inline">Customize</span>
@@ -1313,7 +1337,10 @@ export default function Home() {
 
               <div
                 aria-label="User avatar"
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 text-sm font-bold"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
+                style={{
+                  backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${accentColor})`,
+                }}
               >
                 OH
               </div>
@@ -1341,14 +1368,14 @@ export default function Home() {
               <section
                 id="settings"
                 aria-label="Dashboard widget settings"
-                className="rounded-2xl border border-blue-500/20 bg-[#101522] p-5 sm:p-6"
+                className="rounded-2xl border p-5 sm:p-6" style={{ borderColor: `color-mix(in srgb, var(--brand-primary) 25%, transparent)`, backgroundColor: "var(--surface)" }}
               >
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <SlidersHorizontal
                         size={19}
-                        className="text-blue-400"
+                        style={{ color: accentColor }}
                       />
                       <h3 className="text-lg font-semibold text-white">
                         Customize Dashboard
@@ -1369,6 +1396,105 @@ export default function Home() {
                     <RotateCcw size={15} />
                     Reset Layout
                   </button>
+                </div>
+
+                <div className="mb-6 rounded-xl border p-4 sm:p-5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-elevated)" }}>
+                  <div className="mb-4">
+                    <h4 className="text-base font-semibold text-white">
+                      White-label Branding
+                    </h4>
+                    <p className="mt-1 text-sm text-slate-400">
+                      Customize the dashboard appearance and brand identity.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                    <div>
+                      <label
+                        htmlFor="dashboard-theme"
+                        className="mb-2 block text-sm font-medium text-slate-300"
+                      >
+                        Appearance
+                      </label>
+                      <select
+                        id="dashboard-theme"
+                        value={theme}
+                        onChange={(event) =>
+                          setTheme(event.target.value as "dark" | "light")
+                        }
+                        className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)", "--tw-ring-color": "var(--brand-primary)" } as React.CSSProperties}
+                      >
+                        <option value="dark">Dark mode</option>
+                        <option value="light">Light mode</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="dashboard-brand-name"
+                        className="mb-2 block text-sm font-medium text-slate-300"
+                      >
+                        Brand name
+                      </label>
+                      <input
+                        id="dashboard-brand-name"
+                        type="text"
+                        maxLength={60}
+                        value={brandName}
+                        onChange={(event) => setBrandName(event.target.value)}
+                        className="w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:ring-2" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)", color: "var(--foreground)", "--tw-ring-color": "var(--brand-primary)" } as React.CSSProperties}
+                        placeholder="Your company name"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="dashboard-primary-color"
+                        className="mb-2 block text-sm font-medium text-slate-300"
+                      >
+                        Primary color
+                      </label>
+                      <div className="flex items-center gap-3 rounded-lg border px-3 py-2" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+                        <input
+                          id="dashboard-primary-color"
+                          type="color"
+                          value={primaryColor}
+                          onChange={(event) =>
+                            setBrandColors(event.target.value, accentColor)
+                          }
+                          aria-label="Choose primary brand color"
+                          className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent"
+                        />
+                        <span className="text-sm text-slate-300">
+                          {primaryColor.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="dashboard-accent-color"
+                        className="mb-2 block text-sm font-medium text-slate-300"
+                      >
+                        Accent color
+                      </label>
+                      <div className="flex items-center gap-3 rounded-lg border px-3 py-2" style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+                        <input
+                          id="dashboard-accent-color"
+                          type="color"
+                          value={accentColor}
+                          onChange={(event) =>
+                            setBrandColors(primaryColor, event.target.value)
+                          }
+                          aria-label="Choose accent brand color"
+                          className="h-8 w-10 cursor-pointer rounded border-0 bg-transparent"
+                        />
+                        <span className="text-sm text-slate-300">
+                          {accentColor.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -1490,7 +1616,7 @@ export default function Home() {
             </div>
 
             <footer className="flex flex-wrap justify-between gap-2 border-t border-white/[0.08] pt-5 text-xs text-slate-500">
-              <span>Portfolio Analytics Dashboard</span>
+              <span>{brandName || "Portfolio Analytics"} Dashboard</span>
               <span>Demo data · Not real-time market information</span>
             </footer>
           </div>

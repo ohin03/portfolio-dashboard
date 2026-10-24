@@ -172,7 +172,7 @@ className={`mt-1 text-2xl font-bold ${
           aria-pressed={selectedRange === range}
           className={`rounded-lg px-3 py-2 text-xs font-medium transition ${
             selectedRange === range
-              ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+              ? "bg-blue-700 text-white shadow-lg shadow-blue-500/20"
               : "text-slate-400 hover:bg-white/[0.06] hover:text-white"
           }`}
         >

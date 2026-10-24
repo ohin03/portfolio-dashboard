@@ -34,3 +34,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+*storybook.log
+
+# Generated Storybook build
+storybook-static/
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Lighthouse reports
+lighthouse-report.html
