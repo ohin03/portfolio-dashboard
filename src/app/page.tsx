@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   DndContext,
   PointerSensor,
@@ -1100,6 +1100,21 @@ function DividendIncomeWidget() {
   );
 }
 
+const MemoPortfolioSummary = memo(PortfolioSummary);
+const MemoPerformanceWidget = memo(PerformanceWidget);
+const MemoAssetAllocationWidget = memo(AssetAllocationWidget);
+const MemoRiskAnalysisWidget = memo(RiskAnalysisWidget);
+const MemoCorrelationMatrixWidget = memo(CorrelationMatrixWidget);
+const MemoBrinsonAttributionWidget = memo(BrinsonAttributionWidget);
+const MemoRiskMetricsWidget = memo(RiskMetricsWidget);
+const MemoMarketStatusWidget = memo(MarketStatusWidget);
+const MemoTopHoldingsWidget = memo(TopHoldingsWidget);
+const MemoRecentTransactionsWidget = memo(RecentTransactionsWidget);
+const MemoSectorExposureWidget = memo(SectorExposureWidget);
+const MemoBenchmarkComparisonWidget = memo(BenchmarkComparisonWidget);
+const MemoDividendIncomeWidget = memo(DividendIncomeWidget);
+const MemoDrawdownChart = memo(DrawdownChart);
+
 
 
 export default function Home() {
@@ -1147,46 +1162,46 @@ export default function Home() {
   function renderWidget(widgetType: WidgetType) {
     switch (widgetType) {
       case "portfolio-summary":
-        return <PortfolioSummary />;
+        return <MemoPortfolioSummary />;
 
       case "performance":
-        return <PerformanceWidget />;
+        return <MemoPerformanceWidget />;
 
       case "asset-allocation":
-        return <AssetAllocationWidget />;
+        return <MemoAssetAllocationWidget />;
 
       case "risk-analysis":
-        return <RiskAnalysisWidget />;
+        return <MemoRiskAnalysisWidget />;
 
       case "market-status":
-        return <MarketStatusWidget />;
+        return <MemoMarketStatusWidget />;
 
       case "top-holdings":
-        return <TopHoldingsWidget />;
+        return <MemoTopHoldingsWidget />;
 
       case "recent-transactions":
-        return <RecentTransactionsWidget />;
+        return <MemoRecentTransactionsWidget />;
 
       case "sector-exposure":
-        return <SectorExposureWidget />;
+        return <MemoSectorExposureWidget />;
 
       case "benchmark-comparison":
-        return <BenchmarkComparisonWidget />;
+        return <MemoBenchmarkComparisonWidget />;
 
       case "dividend-income":
-        return <DividendIncomeWidget />;
+        return <MemoDividendIncomeWidget />;
 
       case "drawdown-analysis":
-        return <DrawdownChart />;
+        return <MemoDrawdownChart />;
 
       case "risk-metrics":
-        return <RiskMetricsWidget />;
+        return <MemoRiskMetricsWidget />;
 
       case "correlation-matrix":
-        return <CorrelationMatrixWidget />;
+        return <MemoCorrelationMatrixWidget />;
 
       case "brinson-attribution":
-        return <BrinsonAttributionWidget />;
+        return <MemoBrinsonAttributionWidget />;
 
       default:
         return null;
